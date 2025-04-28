@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Diffie-Hellman Key Exchange</title>
+</head>
+<body>
+  <h2>Diffie-Hellman Key Exchange Demo</h2>
+  <button onclick="generateKey()">Generate Key</button>
+  <p id="output"></p>
+
+  <script>
+    const prime = parseInt(prompt("Enter shared prime: ")); // Shared prime
+    const base = parseInt(prompt("Enter shared base: "));   // Shared base
+
+    function modPow(base, exp, mod) {
+      let result = 1;
+      base = base % mod;
+      while (exp > 0) {
+        if (exp % 2 === 1)
+          result = (result * base) % mod;
+        exp = Math.floor(exp / 2);
+        base = (base * base) % mod;
+      }
+      return result;
+    }
+
+    function generateKey() {
+      const alicePrivate = Math.floor(Math.random() * 10) + 1;
+      const bobPrivate = Math.floor(Math.random() * 10) + 1;
+
+      const alicePublic = modPow(base, alicePrivate, prime);
+      const bobPublic = modPow(base, bobPrivate, prime);
+
+      const aliceShared = modPow(bobPublic, alicePrivate, prime);
+      const bobShared = modPow(alicePublic, bobPrivate, prime);
+
+      document.getElementById("output").innerHTML = `
+        Alice's Private Key: ${alicePrivate}<br>
+        Bob's Private Key: ${bobPrivate}<br>
+        Shared Prime: ${prime}, Base: ${base}<br>
+        Alice's Public Key: ${alicePublic}<br>
+        Bob's Public Key: ${bobPublic}<br>
+        <b>Shared Secret (Alice): ${aliceShared}</b><br>
+        <b>Shared Secret (Bob): ${bobShared}</b>
+      `;
+    }
+  </script>
+</body>
+</html>

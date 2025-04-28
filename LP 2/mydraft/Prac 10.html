@@ -1,0 +1,95 @@
+<!-- # 10.	Write a program to implement the Diffie-Hellman Key Exchange mechanism using HTML and JavaScript. Consider the end user as one of the parties (Alice) and the JavaScript application as other party (bob). -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Diffie-Hellman Key Exchange Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        input, button {
+            padding: 8px;
+            margin: 8px 0;
+            width: 100%;
+        }
+        .result {
+            background: #f2f2f2;
+            padding: 10px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Diffie-Hellman Key Exchange</h2>
+
+    <form id="dhForm">
+        <label>Enter Prime Number (p):</label>
+        <input type="number" id="primeP" required>
+
+        <label>Enter Base (g):</label>
+        <input type="number" id="baseG" required>
+
+        <label>Enter Your Private Key (Alice's private key a):</label>
+        <input type="number" id="alicePrivate" required>
+
+        <button type="submit">Generate Shared Secret</button>
+    </form>
+
+    <div class="result" id="result" style="display:none;">
+        <h3>Results:</h3>
+        <p id="alicePublic"></p>
+        <p id="bobPublic"></p>
+        <p id="sharedSecretAlice"></p>
+        <p id="sharedSecretBob"></p>
+    </div>
+
+    <script>
+        function modPow(base, exponent, modulus) {
+            if (modulus === 1) return 0;
+            let result = 1;
+            base = base % modulus;
+            while (exponent > 0) {
+                if (exponent % 2 === 1) {
+                    result = (result * base) % modulus;
+                }
+                exponent = exponent >> 1; // divide by 2
+                base = (base * base) % modulus;
+            }
+            return result;
+        }
+
+        document.getElementById('dhForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            let p = parseInt(document.getElementById('primeP').value);
+            let g = parseInt(document.getElementById('baseG').value);
+            let a = parseInt(document.getElementById('alicePrivate').value);
+
+            // Simulate Bob (JavaScript generates Bob's private key)
+            let b = Math.floor(Math.random() * (p - 2)) + 1; // Bob's private key between 1 and p-1
+
+            // Calculate public keys
+            let A = modPow(g, a, p); // Alice's public key
+            let B = modPow(g, b, p); // Bob's public key
+
+            // Each party calculates the shared secret
+            let sharedSecretAlice = modPow(B, a, p);
+            let sharedSecretBob = modPow(A, b, p);
+
+            // Display results
+            document.getElementById('alicePublic').innerText = "Alice's Public Value (A): " + A;
+            document.getElementById('bobPublic').innerText = "Bob's Public Value (B): " + B;
+            document.getElementById('sharedSecretAlice').innerText = "Shared Secret computed by Alice: " + sharedSecretAlice;
+            document.getElementById('sharedSecretBob').innerText = "Shared Secret computed by Bob: " + sharedSecretBob;
+
+            document.getElementById('result').style.display = 'block';
+        });
+    </script>
+
+</body>
+</html>
